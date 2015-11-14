@@ -543,8 +543,11 @@ public class BoardGUI extends JFrame implements ActionListener {
         textScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         pane.add(textScroll);
-        String report=Minmax.getBestMoves(board, movelist, DEPTH, player);
+        //String report=Minmax.getBestMoves(board, movelist, DEPTH, player);
         //String report=Minmax.makeReport(board,movelist,DEPTH,player);
+        //info.setText(report);
+
+        String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
         info.setText(report);
 
 
@@ -566,7 +569,7 @@ public class BoardGUI extends JFrame implements ActionListener {
             redrawBoard();
             player=true;
             movelist=Logic.runACheck(player,board,false);
-            String report=Minmax.getBestMoves(board, movelist, DEPTH, player);
+            String report=Minmax.bestReport(board, movelist, DEPTH, player);
             //String report=Minmax.makeReport(board,movelist,DEPTH,player);
             info.setText(report);
             return;
@@ -599,13 +602,15 @@ public class BoardGUI extends JFrame implements ActionListener {
             if(!moveFound)return;
             boolean jumpmove=false;
             if(Math.abs(pieceSelected-i)>6)jumpmove=true;
-            board=Logic.movePiece(board,new Move(pieceSelected,i,jumpmove));
+            char originalPiece=board[pieceSelected];
+            board=Logic.movePiece(board,new Move(pieceSelected,i,board[pieceSelected]));
             boolean newKing=false;
             if((board[i]!='B'&&board[i]!='R')&&Logic.checkKing(i,player,selectedKing)){
                 newKing=true;
                 if(player)board[i]='B';
                 else board[i]='R';
             }
+            if(originalPiece!=board[i])newKing=true;
             redrawBoard();
             if(!newKing) {
                 resetSelection(pieceSelected);
@@ -624,9 +629,11 @@ public class BoardGUI extends JFrame implements ActionListener {
                 info.setText("Game over!\n"+winner+" wins!");
             }
             else {
-                String report=Minmax.getBestMoves(board, movelist, DEPTH, player);
-                //String report=Minmax.makeReport(board,movelist,DEPTH,player);
+                String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
                 info.setText(report);
+                ArrayList<Move> myList=new ArrayList<Move>();
+                myList=Logic.createAllMoves(board, player);
+                System.out.println(Minmax.makeReport(board,myList,10,player));
             }
         }
 
