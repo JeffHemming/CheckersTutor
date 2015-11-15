@@ -6,11 +6,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.Timer;
 
 
 public class BoardGUI extends JFrame implements ActionListener {
+    public static int COMPUTERSKILL=3;
     public static int DEPTH= 10;
+    public static ArrayList<Move>[] bestMoveList;
+    public static int startedMove=-1,endedMove=-1;
     public static boolean forceJump=false;
     public static ArrayList<Move> movelist=new ArrayList<Move>();
     public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -547,9 +551,10 @@ public class BoardGUI extends JFrame implements ActionListener {
         //String report=Minmax.makeReport(board,movelist,DEPTH,player);
         //info.setText(report);
 
-        String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
-        info.setText(report);
+       // String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
+       // info.setText(report);
 
+        bestMoveList=prepare();
 
         this.setSize(14*(HEIGHT/8)+HEIGHT/16,HEIGHT/16+8*(HEIGHT/8)+39);
         pane.setBackground(Color.LIGHT_GRAY);
@@ -569,9 +574,10 @@ public class BoardGUI extends JFrame implements ActionListener {
             redrawBoard();
             player=true;
             movelist=Logic.runACheck(player,board,false);
-            String report=Minmax.bestReport(board, movelist, DEPTH, player);
+            bestMoveList=prepare();
+            //String report=Minmax.bestReport(board, movelist, DEPTH, player);
             //String report=Minmax.makeReport(board,movelist,DEPTH,player);
-            info.setText(report);
+            //info.setText(report);
             return;
         }
 
@@ -594,6 +600,8 @@ public class BoardGUI extends JFrame implements ActionListener {
 
         //check if selected move is legal
         else if(Logic.checkLegal(board,pieceSelected,i,forceJump,player)){
+            if(startedMove==-1)startedMove=pieceSelected;
+            endedMove=i;
             boolean moveFound=false;
             for(int t=0;t<movelist.size();t++){
                 if(movelist.get(t).start==pieceSelected&&movelist.get(t).end==i)
@@ -629,12 +637,69 @@ public class BoardGUI extends JFrame implements ActionListener {
                 info.setText("Game over!\n"+winner+" wins!");
             }
             else {
-                String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
-                info.setText(report);
-                ArrayList<Move> myList=new ArrayList<Move>();
-                myList=Logic.createAllMoves(board, player);
-                System.out.println(Minmax.makeReport(board,myList,10,player));
+              //  String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
+             //   info.setText(report);
+             //   ArrayList<Move> myList=new ArrayList<Move>();
+           //     myList=Logic.createAllMoves(board, player);
+            //    System.out.println(Minmax.makeReport(board, myList, 10, player));
+
+                redrawBoard();
+
+                int lookahead=0;
+                int look=COMPUTERSKILL;
+                for(int si=0;si<bestMoveList[look].size();si++){
+                    if(bestMoveList[look].get(si).start==startedMove&&bestMoveList[look].get(si).end==endedMove){
+                        lookahead=look;
+                        break;
+                    }
+                }
+                if(lookahead<1){
+                    int away=1;
+                    while(lookahead<1&&away<10) {
+                        if (look - away > 0) {
+                            for (int si = 0; si < bestMoveList[look - away].size(); si++) {
+                                if (bestMoveList[look - away].get(si).start == startedMove && bestMoveList[look - away].get(si).end == endedMove) {
+                                    lookahead = look - away;
+                                    break;
+                                }
+                            }
+                        }
+                        if (look + away < 11) {
+                            for (int si = 0; si < bestMoveList[look + away].size(); si++) {
+                                if (bestMoveList[look + away].get(si).start == startedMove && bestMoveList[look + away].get(si).end == endedMove) {
+                                    lookahead = look + away;
+                                    break;
+                                }
+                            }
+                        }
+                        away++;
+                    }
+                }
+
+
+
+
+                /*
+                for (int look=10;look>0;look--){
+                    for(int si=0;si<bestMoveList[look].size();si++){
+                        if(bestMoveList[look].get(si).start==startedMove&&bestMoveList[look].get(si).end==endedMove){
+                            lookahead=look;
+                            break;
+                        }
+                    }
+                    if(lookahead>0)break;
+                }
+                */
+                String lastRating="";
+                if(lookahead>0)lastRating+="You seem to be looking "+lookahead+" moves ahead.";
+                else lastRating+="You seem to be making random moves.";
+                info.setText(lastRating);
+                startedMove=-1;
+                endedMove=-1;
+                Timer computerTurnTimer = new Timer();
+                computerTurnTimer.schedule(new computerTurn(), 1000);
             }
+
         }
 
 
@@ -761,5 +826,56 @@ public class BoardGUI extends JFrame implements ActionListener {
             s+=board[i];
         }
         return s;
+    }
+
+
+    private class computerTurn extends TimerTask {
+        @Override
+        public void run() {
+            int playerSkill=COMPUTERSKILL;
+            ArrayList<Move> cList=Logic.createAllMoves(board, player);
+            ArrayList<Double> cScore=new ArrayList<>();
+            for(int i=0;i<cList.size();i++){
+                cScore.add(Minmax.mm(board,false,playerSkill,0,20));
+            }
+            ArrayList<Integer> indices=new ArrayList<>();
+            double myMax=Collections.max(cScore);
+            for(int i=0;i<cScore.size();i++){
+                if(Math.abs(cScore.get(i)-myMax)<.0001)indices.add(i);
+            }
+            Random r = new Random();
+            int winner= r.nextInt(indices.size());
+            int lIndex=indices.get(winner);
+            board=Logic.movePiece(board,cList.get(lIndex));
+            redrawBoard();
+            player=!player;
+            bestMoveList=prepare();
+        }
+    }
+
+    public ArrayList<Move>[] prepare(){
+        movelist=new ArrayList<>();
+        movelist=Logic.createAllMoves(board,player);
+        double[][] scorelist=new double[11][movelist.size()];
+        for(int i=1;i<11;i++){
+            for(int mov=0;mov<movelist.size();mov++){
+                scorelist[i][mov]=Minmax.mm(Logic.movePiece(board,movelist.get(mov)),!player,i-1,0,20);
+            }
+        }
+        ArrayList<Move>[] bestMove=new ArrayList[11];
+        for(int i=1;i<11;i++){
+            bestMove[i]=new ArrayList<>();
+            double bestM=scorelist[i][0];
+            for(int j=0;j<movelist.size();j++){
+                if(Math.abs(scorelist[i][j]-bestM)<.0001){
+                    bestMove[i].add(movelist.get(j));
+                }
+                else if(scorelist[i][j]>bestM){
+                    bestMove[i].clear();
+                    bestMove[i].add(movelist.get(j));
+                }
+            }
+        }
+        return bestMove;
     }
 }

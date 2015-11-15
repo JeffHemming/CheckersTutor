@@ -9,7 +9,7 @@ public class Main {
     //public static ArrayList<Move> moveList=new ArrayList<Move>();
 
     public static void main(String[] args) throws IOException {
-        int REALGAME=2;
+        int REALGAME=1;
 
 
         char[] bl=new char[32];
@@ -53,9 +53,6 @@ public class Main {
         char[]realBoard=new char[32];
         for(int i=0;i<32;i++)realBoard[i]=bl[i];
 
-        ArrayList<Move> myList=new ArrayList<Move>();
-        myList=Logic.createAllMoves(realBoard,true);
-        System.out.println(Minmax.makeReport(realBoard,myList,10,true));
 
 
        BoardGUI b=new BoardGUI(realBoard,true);
