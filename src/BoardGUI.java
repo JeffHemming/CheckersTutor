@@ -11,7 +11,7 @@ import java.util.Timer;
 
 
 public class BoardGUI extends JFrame implements ActionListener {
-    public static int COMPUTERSKILL=3;
+    public static int COMPUTERSKILL=10;
     public static int DEPTH= 10;
     public static ArrayList<Move>[] bestMoveList;
     public static int startedMove=-1,endedMove=-1;
@@ -466,7 +466,7 @@ public class BoardGUI extends JFrame implements ActionListener {
                 String winner=new String();
                 if(player)winner="Red";
                 else winner="Black";
-                a.setText("Game over!\n"+winner+" wins!");
+                a.setText("Game over!  "+winner+" wins!");
             }
             else {
               //  String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);

@@ -9,7 +9,7 @@ public class Main {
     //public static ArrayList<Move> moveList=new ArrayList<Move>();
 
     public static void main(String[] args) throws IOException {
-        int REALGAME=1;
+        int REALGAME=4;
 
 
         char[] bl=new char[32];
@@ -47,6 +47,21 @@ public class Main {
             bl[17] = 'r';
             bl[18]='r';
             bl[22]='b';
+        }
+
+        else if(REALGAME==4){
+            //check double
+            for (int i = 0; i < 32; i++) {
+                bl[i]='x';
+            }
+            bl[4] = 'r';
+            bl[8] = 'r';
+            bl[10]='r';
+            bl[18]='b';
+            bl[19]='r';
+            bl[23]='b';
+            bl[26] = 'b';
+            bl[31] = 'b';
         }
 
      //   Jumps.createTakeList(bl,true);
