@@ -702,7 +702,7 @@ public class BoardGUI extends JFrame implements ActionListener {
                 cScore.add(Minmax.mm(Logic.movePiece(board,cList.get(i)),true,playerSkill,0,20));
             }
             ArrayList<Integer> indices=new ArrayList<>();
-            double myMax=Collections.max(cScore);
+            double myMax=Collections.min(cScore);
             for(int i=0;i<cScore.size();i++){
                 if(Math.abs(cScore.get(i)-myMax)<.0001)indices.add(i);
             }
