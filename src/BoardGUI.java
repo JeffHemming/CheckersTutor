@@ -5,13 +5,14 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.Timer;
 
 
 public class BoardGUI extends JFrame implements ActionListener {
-    public static int COMPUTERSKILL=10;
+    public static int maxCS=10;
+    public static int COMPUTERSKILL=Main.p.lookahead;
     public static int DEPTH= 10;
     public static ArrayList<Move>[] bestMoveList;
     public static int startedMove=-1,endedMove=-1;
@@ -69,6 +70,8 @@ public class BoardGUI extends JFrame implements ActionListener {
     }
 
     public BoardGUI(char[] inboard, boolean inplayer) throws IOException {
+
+        if(COMPUTERSKILL>maxCS)COMPUTERSKILL=maxCS;
         this.setResizable(true);
         Container pane = getContentPane();
         pane.setLayout(null);
@@ -467,6 +470,24 @@ public class BoardGUI extends JFrame implements ActionListener {
                 if(player)winner="Red";
                 else winner="Black";
                 a.setText("Game over!  "+winner+" wins!");
+                Main.p.adjustments=1;
+                Main.p.skill=Main.p.lookahead;
+                Main.ps.pList.set(Main.index,Main.p);
+
+                //update list
+                PrintWriter writer = null;
+                try {
+                    writer = new PrintWriter("src/image/playerRecord.txt", "UTF-8");
+                    writer.println(Main.ps.pList.size());
+                    for(int wi=0;wi<Main.ps.pList.size();wi++){
+                        writer.println(Main.ps.pList.get(wi).toString());
+                    }
+                    writer.close();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (UnsupportedEncodingException e1) {
+                    e1.printStackTrace();
+                }
             }
             else {
               //  String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
@@ -524,8 +545,17 @@ public class BoardGUI extends JFrame implements ActionListener {
                 */
                 String lastRating="";
 
-                if(lookahead>0)lastRating+="You seem to be looking "+lookahead+" moves ahead.";
-                else lastRating+="You seem to be making random moves.";
+                if(lookahead>0){
+                    lastRating+="You seem to be looking "+lookahead+" moves ahead.";
+                    if(lookahead!=Main.p.skill){
+                        Main.p.skill+=lookahead;
+                        Main.p.adjustments++;
+                       // Main.p.lookahead=(int)(Main.p.skill/Main.p.adjustments);
+                      //  COMPUTERSKILL=Main.p.lookahead;
+                      //  if(COMPUTERSKILL>maxCS)COMPUTERSKILL=maxCS;
+                    }
+                }
+                else lastRating+="";
                 a.setText(lastRating);
                 startedMove=-1;
                 endedMove=-1;
@@ -669,7 +699,7 @@ public class BoardGUI extends JFrame implements ActionListener {
             ArrayList<Move> cList=Logic.createAllMoves(board, player);
             ArrayList<Double> cScore=new ArrayList<>();
             for(int i=0;i<cList.size();i++){
-                cScore.add(Minmax.mm(board,false,playerSkill,0,20));
+                cScore.add(Minmax.mm(Logic.movePiece(board,cList.get(i)),true,playerSkill,0,20));
             }
             ArrayList<Integer> indices=new ArrayList<>();
             double myMax=Collections.max(cScore);
