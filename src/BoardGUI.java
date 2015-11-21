@@ -724,12 +724,17 @@ public class BoardGUI extends JFrame implements ActionListener {
             }
         }
         int bestcount=0;
+        int bestsum=0;
         ArrayList<Integer> bestDepths=new ArrayList<>();
         for(int i=1;i<11;i++){
             if(bestMove[i]){
                 bestcount++;
                 bestDepths.add(i);
+                bestsum+=i;
             }
+        }
+        if(bestsum>0){
+            bestsum/=bestcount;
         }
         int assumption=0;
         if(bestcount==0){}
@@ -747,6 +752,10 @@ public class BoardGUI extends JFrame implements ActionListener {
             Main.p.skill+=Main.p.lookahead;
             Main.p.adjustments++;
             assumption=Main.p.lookahead;
+        }
+        else {
+            Main.p.skill+=bestsum;
+            Main.p.adjustments++;
         }
 
         String lastRating="";
