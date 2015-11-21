@@ -408,6 +408,7 @@ public class BoardGUI extends JFrame implements ActionListener {
             }
             redrawBoard();
             player=true;
+            updatePlayerList();
             movelist=Logic.runACheck(player,board,false);
             bestMoveList=prepare();
             //String report=Minmax.bestReport(board, movelist, DEPTH, player);
@@ -470,24 +471,9 @@ public class BoardGUI extends JFrame implements ActionListener {
                 if(player)winner="Red";
                 else winner="Black";
                 a.setText("Game over!  "+winner+" wins!");
-                Main.p.adjustments=1;
-                Main.p.skill=Main.p.lookahead;
-                Main.ps.pList.set(Main.index,Main.p);
+                updatePlayerList();
 
-                //update list
-                PrintWriter writer = null;
-                try {
-                    writer = new PrintWriter("src/image/playerRecord.txt", "UTF-8");
-                    writer.println(Main.ps.pList.size());
-                    for(int wi=0;wi<Main.ps.pList.size();wi++){
-                        writer.println(Main.ps.pList.get(wi).toString());
-                    }
-                    writer.close();
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (UnsupportedEncodingException e1) {
-                    e1.printStackTrace();
-                }
+
             }
             else {
               //  String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
@@ -499,7 +485,7 @@ public class BoardGUI extends JFrame implements ActionListener {
                 redrawBoard();
 
                 int lookahead=0;
-                int look=COMPUTERSKILL;
+                int look=Main.p.lookahead;
                 for(int si=0;si<bestMoveList[look].size();si++){
                     if(bestMoveList[look].get(si).start==startedMove&&bestMoveList[look].get(si).end==endedMove){
                         lookahead=look;
@@ -713,6 +699,10 @@ public class BoardGUI extends JFrame implements ActionListener {
             redrawBoard();
             player=!player;
             bestMoveList=prepare();
+            if(bestMoveList[1].size()==0){
+                a.setText("Game over!  Red wins!");
+                updatePlayerList();
+            }
         }
     }
 
@@ -728,7 +718,8 @@ public class BoardGUI extends JFrame implements ActionListener {
         ArrayList<Move>[] bestMove=new ArrayList[11];
         for(int i=1;i<11;i++){
             bestMove[i]=new ArrayList<>();
-            double bestM=scorelist[i][0];
+            double bestM = 0;
+            if(bestMove[i].size()>0)bestM=scorelist[i][0];
             for(int j=0;j<movelist.size();j++){
                 if(Math.abs(scorelist[i][j]-bestM)<.0001){
                     bestMove[i].add(movelist.get(j));
@@ -740,5 +731,26 @@ public class BoardGUI extends JFrame implements ActionListener {
             }
         }
         return bestMove;
+    }
+
+    public void updatePlayerList(){
+        Main.p.adjustments=1;
+        Main.p.skill=Main.p.lookahead;
+        Main.ps.pList.set(Main.index,Main.p);
+        //update list
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter("src/image/playerRecord.txt", "UTF-8");
+            writer.println(Main.ps.pList.size());
+            for(int wi=0;wi<Main.ps.pList.size();wi++){
+                writer.println(Main.ps.pList.get(wi).toString());
+            }
+            writer.close();
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        COMPUTERSKILL=Main.p.lookahead;
     }
 }

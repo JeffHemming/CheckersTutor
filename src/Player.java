@@ -9,13 +9,13 @@ public class Player {
         skill=0.0;
         adjustments=0;
         name="";
-        lookahead=5;
+        lookahead=1;
     }
     public Player(String n){
-        skill=5.0;
+        skill=0.0;
         adjustments=0;
         name=n;
-        lookahead=5;
+        lookahead=1;
     }
     public Player(String n,double s, int a, int l){
         skill=s;
