@@ -407,6 +407,7 @@ public class BoardGUI extends JFrame implements ActionListener {
                 else board[i] = 'x';
             }
             redrawBoard();
+            a.setText("");
             player=true;
             updatePlayerList();
             movelist=Logic.runACheck(player,board,false);
@@ -484,36 +485,7 @@ public class BoardGUI extends JFrame implements ActionListener {
 
                 redrawBoard();
 
-                int lookahead=0;
-                int look=Main.p.lookahead;
-                for(int si=0;si<bestMoveList[look].size();si++){
-                    if(bestMoveList[look].get(si).start==startedMove&&bestMoveList[look].get(si).end==endedMove){
-                        lookahead=look;
-                        break;
-                    }
-                }
-                if(lookahead<1){
-                    int away=1;
-                    while(lookahead<1&&away<10) {
-                        if (look - away > 0) {
-                            for (int si = 0; si < bestMoveList[look - away].size(); si++) {
-                                if (bestMoveList[look - away].get(si).start == startedMove && bestMoveList[look - away].get(si).end == endedMove) {
-                                    lookahead = look - away;
-                                    break;
-                                }
-                            }
-                        }
-                        if (look + away < 11) {
-                            for (int si = 0; si < bestMoveList[look + away].size(); si++) {
-                                if (bestMoveList[look + away].get(si).start == startedMove && bestMoveList[look + away].get(si).end == endedMove) {
-                                    lookahead = look + away;
-                                    break;
-                                }
-                            }
-                        }
-                        away++;
-                    }
-                }
+                updateLookahead(startedMove,endedMove);
 
 
 
@@ -529,20 +501,7 @@ public class BoardGUI extends JFrame implements ActionListener {
                     if(lookahead>0)break;
                 }
                 */
-                String lastRating="";
 
-                if(lookahead>0){
-                    lastRating+="You seem to be looking "+lookahead+" moves ahead.";
-                    if(lookahead!=Main.p.skill){
-                        Main.p.skill+=lookahead;
-                        Main.p.adjustments++;
-                       // Main.p.lookahead=(int)(Main.p.skill/Main.p.adjustments);
-                      //  COMPUTERSKILL=Main.p.lookahead;
-                      //  if(COMPUTERSKILL>maxCS)COMPUTERSKILL=maxCS;
-                    }
-                }
-                else lastRating+="";
-                a.setText(lastRating);
                 startedMove=-1;
                 endedMove=-1;
                 Timer computerTurnTimer = new Timer();
@@ -734,8 +693,7 @@ public class BoardGUI extends JFrame implements ActionListener {
     }
 
     public void updatePlayerList(){
-        Main.p.adjustments=1;
-        Main.p.skill=Main.p.lookahead;
+        Main.p.lookahead=(int)Main.p.skill/Main.p.adjustments;
         Main.ps.pList.set(Main.index,Main.p);
         //update list
         PrintWriter writer = null;
@@ -751,6 +709,52 @@ public class BoardGUI extends JFrame implements ActionListener {
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();
         }
+        COMPUTERSKILL=Main.p.lookahead;
+    }
+
+    public void updateLookahead(int s, int e){
+        boolean[] bestMove=new boolean[11];
+        bestMove[0]=false;
+        for(int i=1;i<11;i++){
+            for(int j=0;j<bestMoveList[i].size();j++){
+                Move m=bestMoveList[i].get(j);
+                if(m.start==s&&m.end==e){
+                    bestMove[i]=true;
+                }
+            }
+        }
+        int bestcount=0;
+        ArrayList<Integer> bestDepths=new ArrayList<>();
+        for(int i=1;i<11;i++){
+            if(bestMove[i]){
+                bestcount++;
+                bestDepths.add(i);
+            }
+        }
+        int assumption=0;
+        if(bestcount==0){}
+        else if(bestDepths.get(0)>Main.p.lookahead){
+            Main.p.skill+=Main.p.lookahead+1;
+            Main.p.adjustments++;
+            assumption=bestDepths.get(0);
+        }
+        else if(bestDepths.get(bestcount-1)<Main.p.lookahead){
+            Main.p.skill+=Main.p.lookahead-1;
+            Main.p.adjustments++;
+            assumption=bestDepths.get(bestcount-1);
+        }
+        else if(bestcount<4&&bestMove[Main.p.lookahead]){
+            Main.p.skill+=Main.p.lookahead;
+            Main.p.adjustments++;
+            assumption=Main.p.lookahead;
+        }
+
+        String lastRating="";
+
+        if(assumption>0){
+            lastRating+="You we assume you are looking "+assumption+" moves ahead.";
+        }
+        a.setText(lastRating);
         COMPUTERSKILL=Main.p.lookahead;
     }
 }
