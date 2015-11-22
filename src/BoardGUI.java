@@ -675,7 +675,7 @@ public class BoardGUI extends JFrame implements ActionListener {
 
     public void updatePlayerList(){
         Main.p.updateLookaheada();
-        for(int i=0;i<11;i++)Main.p.looks[i]=0;
+       // for(int i=0;i<11;i++)Main.p.looks[i]=0;
         Main.ps.pList.set(Main.index,Main.p);
         //update list
         PrintWriter writer = null;
@@ -713,9 +713,11 @@ public class BoardGUI extends JFrame implements ActionListener {
                 bestcount++;
             }
         }
-        if(bestcount>4){
-            bestMove[1]=false;
-            bestcount--;
+        if(bestcount==10){
+            for(int i=1;i<11;i++){
+                bestMove[i]=false;
+                bestcount--;
+            }
         }
 
         for(int i=1;i<11;i++){
