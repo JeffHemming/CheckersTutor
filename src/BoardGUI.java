@@ -80,7 +80,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         player=inplayer;
 
         a=new JLabel();
-        a.setSize(6*(HEIGHT / 8), HEIGHT / 16);
+        a.setSize(7*(HEIGHT / 8), HEIGHT / 16);
         a.setLocation(0, 0);
         a.setFont(new Font("Georgia", Font.PLAIN, 24));
         a.setForeground(Color.WHITE);
@@ -376,9 +376,9 @@ public class BoardGUI extends JFrame implements ActionListener {
         s32.setActionCommand("31");
         pane.add(s32);
 
-        resetbutton=new JButton("Restart");
-        resetbutton.setSize(2*(HEIGHT / 8), HEIGHT / 16);
-        resetbutton.setLocation(6*(HEIGHT/8), 0);
+        resetbutton=new JButton("Reset");
+        resetbutton.setSize((HEIGHT / 8), HEIGHT / 16);
+        resetbutton.setLocation(7*(HEIGHT/8), 0);
         resetbutton.addActionListener(this);
         resetbutton.setActionCommand("32");
         resetbutton.setFont(new Font("Georgia", Font.PLAIN, 24));
@@ -407,7 +407,8 @@ public class BoardGUI extends JFrame implements ActionListener {
                 else board[i] = 'x';
             }
             redrawBoard();
-            a.setText("");
+            updatePlayerList();
+            a.setText("You played looking " + Main.p.lookahead+" moves ahead.");
             player=true;
             updatePlayerList();
             movelist=Logic.runACheck(player,board,false);
@@ -471,8 +472,8 @@ public class BoardGUI extends JFrame implements ActionListener {
                 String winner=new String();
                 if(player)winner="Red";
                 else winner="Black";
-                a.setText("Game over!  "+winner+" wins!");
                 updatePlayerList();
+                a.setText("Game over!  " + winner + " wins!  You played looking " + Main.p.lookahead + " moves ahead.");
 
 
             }
@@ -638,7 +639,7 @@ public class BoardGUI extends JFrame implements ActionListener {
             player=!player;
             bestMoveList=prepare();
             if(bestMoveList[1].size()==0){
-                a.setText("Game over!  Red wins!");
+                a.setText("Game over!  Red wins!  You played looking "+Main.p.lookahead+" moves ahead.");
                 Main.p.updateLookaheada();
                 updatePlayerList();
             }
@@ -675,7 +676,7 @@ public class BoardGUI extends JFrame implements ActionListener {
 
     public void updatePlayerList(){
         Main.p.updateLookaheada();
-       // for(int i=0;i<11;i++)Main.p.looks[i]=0;
+        for(int i=0;i<11;i++)Main.p.looks[i]=0;
         Main.ps.pList.set(Main.index,Main.p);
         //update list
         PrintWriter writer = null;
