@@ -477,30 +477,9 @@ public class BoardGUI extends JFrame implements ActionListener {
 
             }
             else {
-              //  String report=Minmax.bestReport(board, Logic.createAllMoves(board, player), DEPTH, player);
-             //   info.setText(report);
-             //   ArrayList<Move> myList=new ArrayList<Move>();
-           //     myList=Logic.createAllMoves(board, player);
-            //    System.out.println(Minmax.makeReport(board, myList, 10, player));
-
                 redrawBoard();
 
                 updateLookahead(startedMove,endedMove);
-
-
-
-
-                /*
-                for (int look=10;look>0;look--){
-                    for(int si=0;si<bestMoveList[look].size();si++){
-                        if(bestMoveList[look].get(si).start==startedMove&&bestMoveList[look].get(si).end==endedMove){
-                            lookahead=look;
-                            break;
-                        }
-                    }
-                    if(lookahead>0)break;
-                }
-                */
 
                 startedMove=-1;
                 endedMove=-1;
@@ -660,6 +639,7 @@ public class BoardGUI extends JFrame implements ActionListener {
             bestMoveList=prepare();
             if(bestMoveList[1].size()==0){
                 a.setText("Game over!  Red wins!");
+                Main.p.updateLookaheada();
                 updatePlayerList();
             }
         }
@@ -678,12 +658,13 @@ public class BoardGUI extends JFrame implements ActionListener {
         for(int i=1;i<11;i++){
             bestMove[i]=new ArrayList<>();
             double bestM = 0;
-            if(bestMove[i].size()>0)bestM=scorelist[i][0];
+            if(movelist.size()>0)bestM=scorelist[i][0];
             for(int j=0;j<movelist.size();j++){
-                if(Math.abs(scorelist[i][j]-bestM)<.0001){
+                if(Math.abs(scorelist[i][j]-bestM)<.00000001){
                     bestMove[i].add(movelist.get(j));
                 }
                 else if(scorelist[i][j]>bestM){
+                    bestM=scorelist[i][j];
                     bestMove[i].clear();
                     bestMove[i].add(movelist.get(j));
                 }
@@ -693,7 +674,8 @@ public class BoardGUI extends JFrame implements ActionListener {
     }
 
     public void updatePlayerList(){
-        Main.p.lookahead=(int)Main.p.skill/Main.p.adjustments;
+        Main.p.updateLookaheada();
+        for(int i=0;i<11;i++)Main.p.looks[i]=0;
         Main.ps.pList.set(Main.index,Main.p);
         //update list
         PrintWriter writer = null;
@@ -724,46 +706,33 @@ public class BoardGUI extends JFrame implements ActionListener {
             }
         }
         int bestcount=0;
-        int bestsum=0;
         ArrayList<Integer> bestDepths=new ArrayList<>();
+
         for(int i=1;i<11;i++){
             if(bestMove[i]){
                 bestcount++;
-                bestDepths.add(i);
-                bestsum+=i;
             }
         }
-        if(bestsum>0){
-            bestsum/=bestcount;
+        if(bestcount>4){
+            bestMove[1]=false;
+            bestcount--;
         }
-        int assumption=0;
-        if(bestcount==0){}
-        else if(bestDepths.get(0)>Main.p.lookahead){
-            Main.p.skill+=Main.p.lookahead+1;
-            Main.p.adjustments++;
-            assumption=bestDepths.get(0);
+
+        for(int i=1;i<11;i++){
+            if(bestMove[i]){
+                Main.p.looks[i]++;
+            }
         }
-        else if(bestDepths.get(bestcount-1)<Main.p.lookahead){
-            Main.p.skill+=Main.p.lookahead-1;
-            Main.p.adjustments++;
-            assumption=bestDepths.get(bestcount-1);
-        }
-        else if(bestcount<4&&bestMove[Main.p.lookahead]){
-            Main.p.skill+=Main.p.lookahead;
-            Main.p.adjustments++;
-            assumption=Main.p.lookahead;
-        }
-        else {
-            Main.p.skill+=bestsum;
-            Main.p.adjustments++;
-        }
+        if(bestcount==0)Main.p.looks[0]++;
 
         String lastRating="";
 
-        if(assumption>0){
-            lastRating+="You we assume you are looking "+assumption+" moves ahead.";
+        if(Main.p.lookahead>0){
+            lastRating+="We assume you are looking "+Main.p.lookahead+" moves ahead.";
         }
+        else lastRating+="You seem to be moving randomly.";
         a.setText(lastRating);
         COMPUTERSKILL=Main.p.lookahead;
+        if(COMPUTERSKILL==0)COMPUTERSKILL=1;
     }
 }

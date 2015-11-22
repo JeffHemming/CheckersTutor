@@ -13,7 +13,7 @@ public class Main {
     public static PlayerStats ps;
 
     public static void main(String[] args) throws IOException {
-        int REALGAME=1;
+        int REALGAME=4;
 
         ps=new PlayerStats();
         String[] namelist=new String[ps.numberOfPlayers+1];
