@@ -435,10 +435,10 @@ class BoardGUI extends JFrame implements ActionListener {
                 else board[i] = 'x';
             }
             redrawBoard();
-            updatePlayerList();
+            updatePlayerList(false);
             a.setText("You played looking " + Main.p.lookahead+" moves ahead.");
             player=true;
-            updatePlayerList();
+            updatePlayerList(false);
             movelist=Logic.runACheck(player,board,false);
             bestMoveList=prepare();
             //String report=Minmax.bestReport(board, movelist, DEPTH, player);
@@ -499,7 +499,7 @@ class BoardGUI extends JFrame implements ActionListener {
                 String winner=new String();
                 if(player)winner="Red";
                 else winner="Black";
-                updatePlayerList();
+                updatePlayerList(true);
                 a.setText("Game over!  " + winner + " wins!  You played looking " + Main.p.lookahead + " moves ahead.");
 
 
@@ -666,9 +666,9 @@ class BoardGUI extends JFrame implements ActionListener {
             player=!player;
             bestMoveList=prepare();
             if(bestMoveList[1].size()==0){
-                a.setText("Game over!  Red wins!  You played looking "+Main.p.lookahead+" moves ahead.");
                 Main.p.updateLookaheada();
-                updatePlayerList();
+                updatePlayerList(false);
+                a.setText("Game over!  Red wins!  You played looking "+Main.p.lookahead+" moves ahead.");
             }
         }
     }
@@ -701,10 +701,11 @@ class BoardGUI extends JFrame implements ActionListener {
         return bestMove;
     }
 
-    private void updatePlayerList(){
+    private void updatePlayerList(boolean w){
         Main.p.updateLookaheada();
         for(int i=0;i<11;i++)Main.p.looks[i]=0;
         Main.ps.pList.set(Main.index,Main.p);
+        if(w)Main.p.lookahead++;
         //update list
         PrintWriter writer = null;
         try {
@@ -762,10 +763,11 @@ class BoardGUI extends JFrame implements ActionListener {
 
         String lastRating="";
 
-        if(Main.p.lookahead>0){
+        /*if(Main.p.lookahead>0){
             lastRating+="We assume you are looking "+Main.p.lookahead+" moves ahead.";
         }
         else lastRating+="You seem to be moving randomly.";
+        */
         a.setText(lastRating);
         COMPUTERSKILL=Main.p.lookahead;
         if(COMPUTERSKILL==0)COMPUTERSKILL=1;

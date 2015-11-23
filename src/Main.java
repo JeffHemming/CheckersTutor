@@ -17,7 +17,7 @@ class Main {
         ps=new PlayerStats();
         String[] namelist=new String[ps.numberOfPlayers+1];
         for(int i=0;i<ps.numberOfPlayers;i++){
-            namelist[i]=ps.pList.get(i).name;
+            namelist[i]=ps.pList.get(i).name+": Level "+ps.pList.get(i).lookahead;
         }
         namelist[ps.numberOfPlayers]="New Player";
         String inName = (String) JOptionPane.showInputDialog(null, "Who are you?",
