@@ -423,7 +423,7 @@ class BoardGUI extends JFrame implements ActionListener {
         this.setVisible(true);
         this.setTitle("Checkers Tutor");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        JOptionPane.showMessageDialog(this,Minmax.bestReport(board,movelist,10,player));
+        //JOptionPane.showMessageDialog(this,Minmax.bestReport(board,movelist,10,player));
     }
 
     @Override
