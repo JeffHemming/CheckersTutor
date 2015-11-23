@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * Created by Dad on 10/31/2015.
  */
-public class Minmax {
+class Minmax {
 
     public static String bestReport(char[] board, ArrayList<Move> movelist, int depthWanted, boolean player){
         String report=new String();
@@ -18,7 +19,7 @@ public class Minmax {
             currentHigh+=(movelist.get(0).start+1)+" - "+(movelist.get(0).end+1)+",   ";
             Double highscore=scoreArray.get(0);
             for(int i=1;i<scoreArray.size();i++){
-                if(scoreArray.get(i)==highscore){
+                if(Objects.equals(scoreArray.get(i), highscore)){
                     currentHigh+=(movelist.get(i).start+1)+" - "+(movelist.get(i).end+1)+",   ";
                 }
                 else if((player&&scoreArray.get(i)>highscore)||(!player&&scoreArray.get(i)<highscore)){
@@ -70,7 +71,7 @@ public class Minmax {
         else return Collections.min(scores);
     }
 
-    public static double score(char[] board){
+    private static double score(char[] board){
         double countB=0;
         double countR=0;
         for(int i=0;i<32;i++){

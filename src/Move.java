@@ -4,10 +4,10 @@ import java.util.ArrayList;
  * Created by Dad on 10/31/2015.
  */
 public class Move {
-    public int start;
+    public final int start;
     public int end;
-    public char me;
-    public ArrayList<Integer> takenlist;
+    public final char me;
+    public final ArrayList<Integer> takenlist;
 
     Move(){
         me='d';

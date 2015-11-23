@@ -3,7 +3,7 @@ import java.util.ArrayList;
 /**
  * Created by Dad on 10/31/2015.
  */
-public class Logic {
+class Logic {
 
     public static boolean checkLegal(char[] iboard, int piece, int target, boolean forceJump, boolean player) {
         char[] board = new char[32];
@@ -20,34 +20,29 @@ public class Logic {
             int diff = piece - target;
             if (diff == 4) {
                 if (forceJump) return false;
-                if (board[target] == 'x') return true;
-                else return false;
+                return board[target] == 'x';
             }
             if (diff == 5) {
                 if (forceJump) return false;
                 if (piece % 4 == 0 || piece / 4 % 2 == 0) return false;
-                if (board[target] == 'x') return true;
-                else return false;
+                return board[target] == 'x';
             }
             if (diff == 3) {
                 if (forceJump) return false;
                 if (piece / 4 % 2 == 1 || piece == 3 || piece == 11 || piece == 19 || piece == 27) return false;
-                if (board[target] == 'x') return true;
-                else return false;
+                return board[target] == 'x';
             }
             if (diff == 7) {
                 if ((piece + 1) % 4 == 0) return false;
                 if (board[target] != 'x') return false;
                 if ((piece / 4) % 2 == 0 && (board[piece - 3] == enemy || board[piece - 3] == enemyK)) return true;
-                if ((piece / 4) % 2 == 1 && (board[piece - 4] == enemy || board[piece - 4] == enemyK)) return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece - 4] == enemy || board[piece - 4] == enemyK);
             }
             if (diff == 9) {
                 if (piece % 4 == 0) return false;
                 if (board[target] != 'x') return false;
                 if ((piece / 4) % 2 == 0 && (board[piece - 4] == enemy || board[piece - 4] == enemyK)) return true;
-                if ((piece / 4) % 2 == 1 && (board[piece - 5] == enemy || board[piece - 5] == enemyK)) return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece - 5] == enemy || board[piece - 5] == enemyK);
             }
             return false;
         }
@@ -55,34 +50,29 @@ public class Logic {
             int diff = piece - target;
             if (diff == -4) {
                 if (forceJump) return false;
-                if (board[target] == 'x') return true;
-                else return false;
+                return board[target] == 'x';
             }
             if (diff == -5) {
                 if (forceJump) return false;
                 if ((piece + 1) % 4 == 0 || piece / 4 % 2 == 1) return false;
-                if (board[target] == 'x') return true;
-                else return false;
+                return board[target] == 'x';
             }
             if (diff == -3) {
                 if (forceJump) return false;
                 if (piece / 4 % 2 == 0 || piece == 4 || piece == 12 || piece == 20 || piece == 28) return false;
-                if (board[target] == 'x') return true;
-                else return false;
+                return board[target] == 'x';
             }
             if (diff == -9) {
                 if ((piece + 1) % 4 == 0) return false;
                 if (board[target] != 'x') return false;
                 if ((piece / 4) % 2 == 0 && (board[piece + 5] == enemy || board[piece + 5] == enemyK)) return true;
-                if ((piece / 4) % 2 == 1 && (board[piece + 4] == enemy || board[piece + 4] == enemyK)) return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece + 4] == enemy || board[piece + 4] == enemyK);
             }
             if (diff == -7) {
                 if (piece % 4 == 0) return false;
                 if (board[target] != 'x') return false;
                 if ((piece / 4) % 2 == 0 && (board[piece + 4] == enemy || board[piece + 4] == enemyK)) return true;
-                if ((piece / 4) % 2 == 1 && (board[piece + 3] == enemy || board[piece + 3] == enemyK)) return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece + 3] == enemy || board[piece + 3] == enemyK);
             }
             return false;
         }
@@ -91,8 +81,7 @@ public class Logic {
 
     public static boolean checkMyPiece(char[] board, boolean player, int i) {
         if (player && (board[i] == 'b' || board[i] == 'B')) return true;
-        if (!player && (board[i] == 'r' || board[i] == 'R')) return true;
-        return false;
+        return !player && (board[i] == 'r' || board[i] == 'R');
     }
 
     public static char[] movePiece(char[] board, Move m) {
@@ -133,8 +122,7 @@ public class Logic {
 
     public static boolean checkKing(int i, boolean player, boolean selectedKing) {
         if (!selectedKing && player && i < 4) return true;
-        if (!selectedKing && !player && i > 27) return true;
-        return false;
+        return !selectedKing && !player && i > 27;
     }
 
 

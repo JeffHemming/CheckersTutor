@@ -4,9 +4,9 @@ import java.util.ArrayList;
 /**
  * Created by Dad on 11/14/2015.
  */
-public class Jumps {
+class Jumps {
 
-    public static ArrayList<Move> findJumps(char[] board, int piece, char me, ArrayList<Move> takerList){
+    private static ArrayList<Move> findJumps(char[] board, int piece, char me, ArrayList<Move> takerList){
         int type=-1;
         char enemy='e',enemyKing='E';
         if(me=='b'||me=='B'){
@@ -41,15 +41,14 @@ public class Jumps {
         return takerList;
     }
 
-    public static boolean isMine(char[] board, int piece, boolean player){
+    private static boolean isMine(char[] board, int piece, boolean player){
         if(player&&board[piece]=='b')return true;
         if(player&&board[piece]=='B')return true;
         if(!player&&board[piece]=='r')return true;
-        if(!player&&board[piece]=='R')return true;
-        return false;
+        return !player && board[piece] == 'R';
     }
 
-    public static void lengthenMove(char[]board,Move curr,boolean player,StateList state){
+    private static void lengthenMove(char[] board, Move curr, boolean player, StateList state){
         int type=-1;
         char enemy='e',enemyKing='E';
         if(curr.me=='b'||curr.me=='B'){

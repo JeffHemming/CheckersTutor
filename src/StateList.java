@@ -3,7 +3,7 @@ import java.util.ArrayList;
 /**
  * Created by Dad on 11/14/2015.
  */
-public class StateList {
+class StateList {
     public ArrayList<Move> takerList=new ArrayList<>();
-    public ArrayList<Move> moveList=new ArrayList<>();
+    public final ArrayList<Move> moveList=new ArrayList<>();
 }

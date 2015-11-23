@@ -1,11 +1,10 @@
 import javax.swing.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Dad on 10/31/2015.
  */
-public class Main {
+class Main {
     //public static ArrayList<Move> takerList=new ArrayList<Move>();
     //public static ArrayList<Move> moveList=new ArrayList<Move>();
     public static Player p;
@@ -126,7 +125,7 @@ public class Main {
 
 
 
-       BoardGUI b=new BoardGUI(realBoard,true);
+       BoardGUI b=new BoardGUI(realBoard);
 
     }
 }

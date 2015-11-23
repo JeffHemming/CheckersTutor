@@ -3,8 +3,8 @@
  */
 public class Player {
     public int lookahead;
-    public int [] looks=new int[11];
-    public String name;
+    public final int [] looks=new int[11];
+    public final String name;
     public Player(){
         for (int i=0;i<11;i++){
             looks[i]=0;

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class PlayerStats {
     boolean tutorMode=false;
     int compLevel=5;
-    ArrayList<Player> pList;
+    final ArrayList<Player> pList;
     int numberOfPlayers;
 
     public PlayerStats() throws IOException {

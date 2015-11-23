@@ -10,30 +10,57 @@ import java.util.*;
 import java.util.Timer;
 
 
-public class BoardGUI extends JFrame implements ActionListener {
-    public static int maxCS=10;
-    public static int COMPUTERSKILL=Main.p.lookahead;
-    public static int DEPTH= 10;
-    public static ArrayList<Move>[] bestMoveList;
-    public static int startedMove=-1,endedMove=-1;
-    public static boolean forceJump=false;
-    public static ArrayList<Move> movelist=new ArrayList<Move>();
-    public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    public static double width = screenSize.getWidth();
-    public static double height = screenSize.getHeight();
-    public static int HEIGHT=(int)(height*.8),WIDTH=HEIGHT;
-    public static int pieceSelected=-1;
-    public static boolean selectedKing=false;
-    public static JButton s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,resetbutton;
-    public static JLabel a,b,c,d,e,f,g,h,l1,l2,l3,l4,l5,l6,l7,l8;
-    public static JTextArea info;
-    public static char[] board;
-    public static JScrollPane textScroll;
-    public static boolean player;
-    public static String coordinate[]={"b1","d1","f1","h1","a2","c2","e2","g2","b3","d3","f3","h3","a4","c4","e4","g4",
-            "b5","d5","f5","h5","a6","c6","e6","g6","b7","d7","f7","h7","a8","c8","e8","g8"};
+class BoardGUI extends JFrame implements ActionListener {
+    private static final int maxCS=10;
+    private static int COMPUTERSKILL=Main.p.lookahead;
+    private static ArrayList<Move>[] bestMoveList;
+    private static int startedMove=-1;
+    private static int endedMove=-1;
+    private static boolean forceJump=false;
+    private static ArrayList<Move> movelist=new ArrayList<Move>();
+    private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private static final double height = screenSize.getHeight();
+    private static final int HEIGHT=(int)(height*.8);
+    private static int pieceSelected=-1;
+    private static boolean selectedKing=false;
+    private static JButton s1;
+    private static JButton s2;
+    private static JButton s3;
+    private static JButton s4;
+    private static JButton s5;
+    private static JButton s6;
+    private static JButton s7;
+    private static JButton s8;
+    private static JButton s9;
+    private static JButton s10;
+    private static JButton s11;
+    private static JButton s12;
+    private static JButton s13;
+    private static JButton s14;
+    private static JButton s15;
+    private static JButton s16;
+    private static JButton s17;
+    private static JButton s18;
+    private static JButton s19;
+    private static JButton s20;
+    private static JButton s21;
+    private static JButton s22;
+    private static JButton s23;
+    private static JButton s24;
+    private static JButton s25;
+    private static JButton s26;
+    private static JButton s27;
+    private static JButton s28;
+    private static JButton s29;
+    private static JButton s30;
+    private static JButton s31;
+    private static JButton s32;
+    private static JButton resetbutton;
+    private static JLabel a;
+    private static char[] board;
+    private static boolean player;
 
-    void setPiece(JButton b, char c){
+    private void setPiece(JButton b, char c){
         if(c=='b') {
             try {
                 Image img = ImageIO.read(getClass().getResource("image/black.png"));
@@ -69,7 +96,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         else b.setIcon(null);
     }
 
-    public BoardGUI(char[] inboard, boolean inplayer) throws IOException {
+    public BoardGUI(char[] inboard) {
 
         if(COMPUTERSKILL>maxCS)COMPUTERSKILL=maxCS;
         this.setResizable(true);
@@ -77,7 +104,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         pane.setLayout(null);
 
         board=inboard;
-        player=inplayer;
+        player= true;
 
         a=new JLabel();
         a.setSize(7*(HEIGHT / 8), HEIGHT / 16);
@@ -396,11 +423,12 @@ public class BoardGUI extends JFrame implements ActionListener {
         this.setVisible(true);
         this.setTitle("Checkers Tutor");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        JOptionPane.showMessageDialog(this,Minmax.bestReport(board,movelist,10,player));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand()=="32"){
+        if(Objects.equals(e.getActionCommand(), "32")){
             for (int i = 0; i < 32; i++) {
                 if (i < 12) board[i] = 'r';
                 else if (i > 19) board[i] = 'b';
@@ -425,8 +453,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         if(pieceSelected==-1){
             if(Logic.checkMyPiece(board,player,i)){
                 pieceSelected=i;
-                if(board[i]=='B'||board[i]=='R')selectedKing=true;
-                else selectedKing=false;
+                selectedKing = board[i] == 'B' || board[i] == 'R';
                 highlightSquare(i);
             }
         }
@@ -499,7 +526,7 @@ public class BoardGUI extends JFrame implements ActionListener {
 
     }
 
-    void redrawBoard(){
+    private void redrawBoard(){
         setPiece(s1, board[0]);
         setPiece(s2, board[1]);
         setPiece(s3, board[2]);
@@ -534,7 +561,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         setPiece(s32, board[31]);
     }
 
-    void highlightSquare(int i){
+    private void highlightSquare(int i){
 
         Border thickBorder = new LineBorder(Color.WHITE, 12);
         if (i == 0) s1.setBorder(thickBorder);
@@ -571,7 +598,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         if (i == 31) s32.setBorder(thickBorder);
     }
 
-    void resetSelection(int i){
+    private void resetSelection(int i){
         pieceSelected=-1;
         selectedKing=false;
         if(i==0)s1.setBorder(null);
@@ -646,7 +673,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         }
     }
 
-    public ArrayList<Move>[] prepare(){
+    private ArrayList<Move>[] prepare(){
         movelist=new ArrayList<>();
         movelist=Logic.createAllMoves(board,player);
         double[][] scorelist=new double[11][movelist.size()];
@@ -674,7 +701,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         return bestMove;
     }
 
-    public void updatePlayerList(){
+    private void updatePlayerList(){
         Main.p.updateLookaheada();
         for(int i=0;i<11;i++)Main.p.looks[i]=0;
         Main.ps.pList.set(Main.index,Main.p);
@@ -695,7 +722,7 @@ public class BoardGUI extends JFrame implements ActionListener {
         COMPUTERSKILL=Main.p.lookahead;
     }
 
-    public void updateLookahead(int s, int e){
+    private void updateLookahead(int s, int e){
         boolean[] bestMove=new boolean[11];
         bestMove[0]=false;
         for(int i=1;i<11;i++){
@@ -714,12 +741,17 @@ public class BoardGUI extends JFrame implements ActionListener {
                 bestcount++;
             }
         }
+        if(Main.p.lookahead<10&&bestMove[Main.p.lookahead]&&!bestMove[Main.p.lookahead+1]){
+            //Teaching moment found
+            JOptionPane.showMessageDialog(this,"Teaching moment found!");
+        }
         if(bestcount==10){
             for(int i=1;i<11;i++){
                 bestMove[i]=false;
                 bestcount--;
             }
         }
+
 
         for(int i=1;i<11;i++){
             if(bestMove[i]){

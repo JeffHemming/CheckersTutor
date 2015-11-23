@@ -3,14 +3,14 @@ import java.util.ArrayList;
 /**
  * Created by Dad on 11/9/2015.
  */
-public class State {
-    public char[] board;
-    public double score;
-    public boolean playerturn;
-    public Move lastmove;
-    public boolean lastJump;
-    public boolean jumpAvailable;
-    public ArrayList<Move> moveList;
+class State {
+    private final char[] board;
+    private double score;
+    private final boolean playerturn;
+    private final Move lastmove;
+    private final boolean lastJump;
+    private boolean jumpAvailable;
+    private ArrayList<Move> moveList;
 
     public State(){
         board=new char[32];
@@ -40,7 +40,7 @@ public class State {
         setMoveList();
     }
 
-    public void setScore(){
+    private void setScore(){
         double countB=0;
         double countR=0;
         for(int i=0;i<32;i++){
@@ -52,7 +52,7 @@ public class State {
         score=countB/countR;
     }
 
-    public void setMoveList(){
+    private void setMoveList(){
         char me,meK;
         if(playerturn){
             me='b';
@@ -112,7 +112,7 @@ public class State {
         }
     }
 
-    boolean checkLegal(int piece,int target){
+    private boolean checkLegal(int piece, int target){
         char enemy,enemyK;
         if(playerturn){
             enemy='r';
@@ -126,34 +126,29 @@ public class State {
             int diff=piece-target;
             if(diff==4){
                 if(jumpAvailable)return false;
-                if(board[target]=='x')return true;
-                else return false;
+                return board[target] == 'x';
             }
             if(diff==5){
                 if(jumpAvailable)return false;
                 if(piece%4==0||piece/4%2==0)return false;
-                if(board[target]=='x')return true;
-                else return false;
+                return board[target] == 'x';
             }
             if(diff==3){
                 if(jumpAvailable)return false;
                 if(piece/4%2==1||piece==3||piece==11||piece==19||piece==27)return false;
-                if(board[target]=='x')return true;
-                else return false;
+                return board[target] == 'x';
             }
             if(diff==7){
                 if((piece+1)%4==0)return false;
                 if(board[target]!='x')return false;
                 if((piece/4)%2==0&&(board[piece-3]==enemy||board[piece-3]==enemyK))return true;
-                if((piece/4)%2==1&&(board[piece-4]==enemy||board[piece-4]==enemyK))return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece - 4] == enemy || board[piece - 4] == enemyK);
             }
             if(diff==9){
                 if(piece%4==0)return false;
                 if(board[target]!='x')return false;
                 if((piece/4)%2==0&&(board[piece-4]==enemy||board[piece-4]==enemyK))return true;
-                if((piece/4)%2==1&&(board[piece-5]==enemy||board[piece-5]==enemyK))return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece - 5] == enemy || board[piece - 5] == enemyK);
             }
             return false;
         }
@@ -161,34 +156,29 @@ public class State {
             int diff=piece-target;
             if(diff==-4){
                 if(jumpAvailable)return false;
-                if(board[target]=='x')return true;
-                else return false;
+                return board[target] == 'x';
             }
             if(diff==-5){
                 if(jumpAvailable)return false;
                 if((piece+1)%4==0||piece/4%2==1)return false;
-                if(board[target]=='x')return true;
-                else return false;
+                return board[target] == 'x';
             }
             if(diff==-3){
                 if(jumpAvailable)return false;
                 if(piece/4%2==0||piece==4||piece==12||piece==20||piece==28)return false;
-                if(board[target]=='x')return true;
-                else return false;
+                return board[target] == 'x';
             }
             if(diff==-9){
                 if((piece+1)%4==0)return false;
                 if(board[target]!='x')return false;
                 if((piece/4)%2==0&&(board[piece+5]==enemy||board[piece+5]==enemyK))return true;
-                if((piece/4)%2==1&&(board[piece+4]==enemy||board[piece+4]==enemyK))return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece + 4] == enemy || board[piece + 4] == enemyK);
             }
             if(diff==-7){
                 if(piece%4==0)return false;
                 if(board[target]!='x')return false;
                 if((piece/4)%2==0&&(board[piece+4]==enemy||board[piece+4]==enemyK))return true;
-                if((piece/4)%2==1&&(board[piece+3]==enemy||board[piece+3]==enemyK))return true;
-                return false;
+                return (piece / 4) % 2 == 1 && (board[piece + 3] == enemy || board[piece + 3] == enemyK);
             }
             return false;
         }
