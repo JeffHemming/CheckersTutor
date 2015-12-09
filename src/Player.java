@@ -49,12 +49,12 @@ public class Player {
         int max=looks[lookahead];
         int index=lookahead;
         int curr=1;
-        while (lookahead-curr>=0||lookahead+curr<11){
+        while (lookahead-curr>0||lookahead+curr<11){
             if(lookahead+curr<11&&looks[lookahead+curr]>max){
                 max=looks[curr+lookahead];
                 index=lookahead+curr;
             }
-            if(lookahead-curr>=0&&looks[lookahead-curr]>max){
+            if(lookahead-curr>0&&looks[lookahead-curr]>max){
                 max=looks[lookahead-curr];
                 index=lookahead-curr;
             }

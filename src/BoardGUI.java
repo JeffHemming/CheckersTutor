@@ -771,5 +771,6 @@ class BoardGUI extends JFrame implements ActionListener {
         a.setText(lastRating);
         COMPUTERSKILL=Main.p.lookahead;
         if(COMPUTERSKILL==0)COMPUTERSKILL=1;
+        if(COMPUTERSKILL>10)COMPUTERSKILL=10;
     }
 }
