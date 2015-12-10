@@ -55,7 +55,14 @@
 <h3>
 <a id="method" class="anchor" href="#method" aria-hidden="true"><span class="octicon octicon-link"></span></a>Method</h3>
 
-<p>As previously mentioned, Checkers Tutor uses a min-max algorithm with iterative deepening to determine the best move when looking an increasing number of moves ahead.  However, this can consume too much time.  In fact after only looking five moves ahead, the slowdown becomes untenable.  To overcome this, Checkers Tutor implements alpha-beta pruning to drastically cut down the number of potential moves it must examine.  This makes looking further ahead feasible.   </p>
+<p>As previously mentioned, Checkers Tutor uses a min-max algorithm with iterative deepening to determine the best move when looking an increasing number of moves ahead.  However, this can consume too much time.  In fact after only looking five moves ahead, the slowdown becomes untenable.  To overcome this, Checkers Tutor implements alpha-beta pruning to drastically cut down the number of potential moves it must examine.  This makes looking further ahead feasible.  </p>
+
+<p>Throughout play, Checkers Tutor keeps a tally of how far ahead the player may be looking.  For a move which is best when looking 4, 5, or 6 moves ahead, Checkers Tutor adds to the count of "look-aheads" at 4, 5, and 6.  The range is currently from 1 to 10 moves ahead.  At the end of each game, Checkers Tutor will find the highest tallied "look-ahead".  In the case of a tie (which occurs often), Checkers Tutor will use the "look-ahead" closest to the player's current rating.</p>
+
+<h3>
+<a id="limitations-and-improvements-to-be-made" class="anchor" href="#limitations-and-improvements-to-be-made" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations and Improvements to be Made</h3>
+
+<p>Checkers Tutor takes some time to get a good handle on a player's level.  This is partly due to the fact that in most states, there are several "look-aheads" with the same best move.  In addition, Checkers Tutor does not have a long-term memory.  It knows at what level a player starts a game, and at what level the player ends the game, but not an ongoing trend.  This allows for wide fluctuations in its determination of a player's skill.  Keeping more detailed records would allow outliers to be ignored, and a smoother progression to be made.  Finally, since Checkers Tutor assumes a novice player to begin with, a high level player would require more games for Checkers Tutor to match their level, as in the case of multiple possible ratings, it assumes the one closest to the player's starting level.</p>
       </section>
     </div>
 
