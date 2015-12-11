@@ -56,9 +56,11 @@ class BoardGUI extends JFrame implements ActionListener {
     private static JButton s31;
     private static JButton s32;
     private static JButton resetbutton;
-    private static JLabel a;
+    private static JButton tutorbutton;
     private static char[] board;
     private static boolean player;
+    private static boolean tutorOn=true;
+    private static boolean tutorRedo=false;
 
     private void setPiece(JButton b, char c){
         if(c=='b') {
@@ -106,14 +108,6 @@ class BoardGUI extends JFrame implements ActionListener {
         board=inboard;
         player= true;
 
-        a=new JLabel();
-        a.setSize(7*(HEIGHT / 8), HEIGHT / 16);
-        a.setLocation(0, 0);
-        a.setFont(new Font("Georgia", Font.PLAIN, 24));
-        a.setForeground(Color.WHITE);
-        a.setBackground(Color.DARK_GRAY);
-        a.setOpaque(true);
-        pane.add(a);
 
         s1=new JButton();
         s1.setSize(HEIGHT / 8, HEIGHT / 8);
@@ -404,8 +398,8 @@ class BoardGUI extends JFrame implements ActionListener {
         pane.add(s32);
 
         resetbutton=new JButton("Reset");
-        resetbutton.setSize((HEIGHT / 8), HEIGHT / 16);
-        resetbutton.setLocation(7*(HEIGHT/8), 0);
+        resetbutton.setSize(2 * (HEIGHT / 8), HEIGHT / 16);
+        resetbutton.setLocation(6*(HEIGHT/8), 0);
         resetbutton.addActionListener(this);
         resetbutton.setActionCommand("32");
         resetbutton.setFont(new Font("Georgia", Font.PLAIN, 24));
@@ -413,6 +407,16 @@ class BoardGUI extends JFrame implements ActionListener {
         resetbutton.setBackground(Color.DARK_GRAY);
         resetbutton.setOpaque(true);
         pane.add(resetbutton);
+        tutorbutton=new JButton("Tutor is on");
+        tutorbutton.setSize(6*(HEIGHT / 8), HEIGHT / 16);
+        tutorbutton.setLocation(0, 0);
+        tutorbutton.addActionListener(this);
+        tutorbutton.setActionCommand("33");
+        tutorbutton.setFont(new Font("Georgia", Font.PLAIN, 24));
+        tutorbutton.setForeground(Color.WHITE);
+        tutorbutton.setBackground(Color.DARK_GRAY);
+        tutorbutton.setOpaque(true);
+        pane.add(tutorbutton);
 
         movelist=Logic.runACheck(player,board,false);
 
@@ -436,7 +440,6 @@ class BoardGUI extends JFrame implements ActionListener {
             }
             redrawBoard();
             updatePlayerList(false);
-            a.setText("You played looking " + Main.p.lookahead+" moves ahead.");
             player=true;
             updatePlayerList(false);
             movelist=Logic.runACheck(player,board,false);
@@ -446,84 +449,83 @@ class BoardGUI extends JFrame implements ActionListener {
             //info.setText(report);
             return;
         }
-
-        movelist=Logic.runACheck(player,board,forceJump);
-        int i=Integer.parseInt(e.getActionCommand());
-        //select a piece
-        if(pieceSelected==-1){
-            if(Logic.checkMyPiece(board,player,i)){
-                pieceSelected=i;
-                selectedKing = board[i] == 'B' || board[i] == 'R';
-                highlightSquare(i);
-            }
+        else if(Objects.equals(e.getActionCommand(), "33")){
+            tutorOn=!tutorOn;
+            tutorRedo=false;
+            if(tutorOn)tutorbutton.setText("Tutor is on");
+            else tutorbutton.setText("Tutor is off");
         }
-
-        //click on selected piece again
-        else if(pieceSelected==i){
-            resetSelection(i);
-        }
-
-        //check if selected move is legal
-        else if(Logic.checkLegal(board,pieceSelected,i,forceJump,player)){
-            if(startedMove==-1)startedMove=pieceSelected;
-            endedMove=i;
-            boolean moveFound=false;
-            for(int t=0;t<movelist.size();t++){
-                if(movelist.get(t).start==pieceSelected&&movelist.get(t).end==i)
-                    moveFound=true;
+        else {
+            movelist = Logic.runACheck(player, board, forceJump);
+            int i = Integer.parseInt(e.getActionCommand());
+            //select a piece
+            if (pieceSelected == -1) {
+                if (Logic.checkMyPiece(board, player, i)) {
+                    pieceSelected = i;
+                    selectedKing = board[i] == 'B' || board[i] == 'R';
+                    highlightSquare(i);
+                }
             }
-            if(!moveFound)return;
-            boolean jumpmove=false;
-            if(Math.abs(pieceSelected-i)>6)jumpmove=true;
-            char originalPiece=board[pieceSelected];
-            board=Logic.movePiece(board,new Move(pieceSelected,i,board[pieceSelected]));
-            boolean newKing=false;
-            if((board[i]!='B'&&board[i]!='R')&&Logic.checkKing(i,player,selectedKing)){
-                newKing=true;
-                if(player)board[i]='B';
-                else board[i]='R';
-            }
-            if(originalPiece!=board[i])newKing=true;
-            redrawBoard();
-            if(!newKing) {
-                resetSelection(pieceSelected);
-                pieceSelected = i;
-                highlightSquare(i);
-                if (jumpmove&&Logic.getDoubleMoves(i,board,player).size()>0) return;
-            }
-            resetSelection(pieceSelected);
-            player=!player;
-            forceJump=false;
-            movelist=Logic.runACheck(player,board,false);
-            if(movelist.size()==0){
-                String winner=new String();
-                if(player)winner="Red";
-                else winner="Black";
-                updatePlayerList(true);
-                a.setText("Game over!  " + winner + " wins!  You played looking " + Main.p.lookahead + " moves ahead.");
 
-
+            //click on selected piece again
+            else if (pieceSelected == i) {
+                resetSelection(i);
             }
-            else {
+
+            //check if selected move is legal
+            else if (Logic.checkLegal(board, pieceSelected, i, forceJump, player)) {
+                if (startedMove == -1) startedMove = pieceSelected;
+                endedMove = i;
+                boolean moveFound = false;
+                for (int t = 0; t < movelist.size(); t++) {
+                    if (movelist.get(t).start == pieceSelected && movelist.get(t).end == i)
+                        moveFound = true;
+                }
+                if (!moveFound) return;
+                boolean jumpmove = false;
+                if (Math.abs(pieceSelected - i) > 6) jumpmove = true;
+                char originalPiece = board[pieceSelected];
+
+                char[] oldboard = board;
+
+                board = Logic.movePiece(board, new Move(pieceSelected, i, board[pieceSelected]));
+                boolean newKing = false;
+                if ((board[i] != 'B' && board[i] != 'R') && Logic.checkKing(i, player, selectedKing)) {
+                    newKing = true;
+                    if (player) board[i] = 'B';
+                    else board[i] = 'R';
+                }
+                if (originalPiece != board[i]) newKing = true;
                 redrawBoard();
+                if (!newKing) {
+                    resetSelection(pieceSelected);
+                    pieceSelected = i;
+                    highlightSquare(i);
+                    if (jumpmove && Logic.getDoubleMoves(i, board, player).size() > 0) return;
+                }
+                resetSelection(pieceSelected);
+                player = !player;
+                forceJump = false;
+                movelist = Logic.runACheck(player, board, false);
+                if (movelist.size() == 0) {
+                    String winner = new String();
+                    if (player) winner = "Red";
+                    else winner = "Black";
+                    updatePlayerList(true);
+                    tutorbutton.setText("Game over!  " + winner + " wins!");
 
-                updateLookahead(startedMove,endedMove);
 
-                startedMove=-1;
-                endedMove=-1;
-                Timer computerTurnTimer = new Timer();
-                computerTurnTimer.schedule(new computerTurn(), 1000);
+                } else {
+                    redrawBoard();
+                    if (updateLookahead(startedMove, endedMove, oldboard)) {
+                        startedMove = -1;
+                        endedMove = -1;
+                        Timer computerTurnTimer = new Timer();
+                        computerTurnTimer.schedule(new computerTurn(), 1000);
+                    }
+                }
             }
-
         }
-
-
-
-
-
-
-
-
     }
 
     private void redrawBoard(){
@@ -668,7 +670,7 @@ class BoardGUI extends JFrame implements ActionListener {
             if(bestMoveList[1].size()==0){
                 Main.p.updateLookaheada();
                 updatePlayerList(false);
-                a.setText("Game over!  Red wins!  You played looking "+Main.p.lookahead+" moves ahead.");
+                tutorbutton.setText("Game over!  Red wins!");
             }
         }
     }
@@ -723,7 +725,7 @@ class BoardGUI extends JFrame implements ActionListener {
         COMPUTERSKILL=Main.p.lookahead;
     }
 
-    private void updateLookahead(int s, int e){
+    private boolean updateLookahead(int s, int e, char[] oldboard){
         boolean[] bestMove=new boolean[11];
         bestMove[0]=false;
         for(int i=1;i<11;i++){
@@ -742,9 +744,31 @@ class BoardGUI extends JFrame implements ActionListener {
                 bestcount++;
             }
         }
-        if(Main.p.lookahead<10&&bestMove[Main.p.lookahead]&&!bestMove[Main.p.lookahead+1]){
-            //Teaching moment found
-            JOptionPane.showMessageDialog(this,"Teaching moment found!");
+        if(tutorOn) {
+            if (Main.p.lookahead < 10 && bestMove[Main.p.lookahead] && !bestMove[Main.p.lookahead + 1]) {
+                //Teaching moment found
+                player = !player;
+                pieceSelected = -1;
+                startedMove = -1;
+                endedMove = -1;
+                board = oldboard;
+                redrawBoard();
+                pieceSelected = bestMoveList[Main.p.lookahead + 1].get(0).start;
+                selectedKing = board[pieceSelected] == 'B' || board[pieceSelected] == 'R';
+                highlightSquare(pieceSelected);
+                JOptionPane.showMessageDialog(this, "You've selected the best move for your current level.  \nHowever, there's " +
+                        "a better move if you look just a little further ahead.  \nTry looking " + (Main.p.lookahead + 1) + " moves ahead.");
+                tutorRedo = true;
+                return false;
+            } else if (tutorRedo) {
+                tutorRedo = false;
+                if (Main.p.lookahead < 10 && bestMove[Main.p.lookahead + 1]) {
+                    JOptionPane.showMessageDialog(this, "Good job.  \nYou looked further ahead than you normally do.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No.  \nYou didn't find the best move.");
+                }
+                return true;
+            }
         }
         if(bestcount==10){
             for(int i=1;i<11;i++){
@@ -768,9 +792,9 @@ class BoardGUI extends JFrame implements ActionListener {
         }
         else lastRating+="You seem to be moving randomly.";
         */
-        a.setText(lastRating);
         COMPUTERSKILL=Main.p.lookahead;
         if(COMPUTERSKILL==0)COMPUTERSKILL=1;
         if(COMPUTERSKILL>10)COMPUTERSKILL=10;
+        return true;
     }
 }

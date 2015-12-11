@@ -46,6 +46,7 @@ public class Player {
     }
 
     public void updateLookaheada(){
+        if(lookahead>10)lookahead=10;
         int max=looks[lookahead];
         int index=lookahead;
         int curr=1;
