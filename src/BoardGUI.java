@@ -433,6 +433,9 @@ class BoardGUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(Objects.equals(e.getActionCommand(), "32")){
+            if(tutorOn)tutorbutton.setText("Tutor is on");
+            else tutorbutton.setText("Tutor is off");
+            showResult();
             for (int i = 0; i < 32; i++) {
                 if (i < 12) board[i] = 'r';
                 else if (i > 19) board[i] = 'b';
@@ -511,9 +514,9 @@ class BoardGUI extends JFrame implements ActionListener {
                     String winner = new String();
                     if (player) winner = "Red";
                     else winner = "Black";
-                    updatePlayerList(true);
                     tutorbutton.setText("Game over!  " + winner + " wins!");
-
+                    showResult();
+                    updatePlayerList(true);
 
                 } else {
                     redrawBoard();
@@ -667,10 +670,11 @@ class BoardGUI extends JFrame implements ActionListener {
             redrawBoard();
             player=!player;
             bestMoveList=prepare();
-            if(bestMoveList[1].size()==0){
+            if (bestMoveList[1].size()==0){
                 Main.p.updateLookaheada();
-                updatePlayerList(false);
                 tutorbutton.setText("Game over!  Red wins!");
+                showResult();
+                updatePlayerList(false);
             }
         }
     }
@@ -796,5 +800,13 @@ class BoardGUI extends JFrame implements ActionListener {
         if(COMPUTERSKILL==0)COMPUTERSKILL=1;
         if(COMPUTERSKILL>10)COMPUTERSKILL=10;
         return true;
+    }
+
+    public void showResult(){
+        String result="Over the course of the game, this is the number of times you selected the best move.\n";
+        for(int i=1;i<11;i++){
+            result+="Looking "+i+" moves ahead: "+Main.p.looks[i]+" times.\n";
+        }
+        JOptionPane.showMessageDialog(this,result,"Results",JOptionPane.PLAIN_MESSAGE);
     }
 }
